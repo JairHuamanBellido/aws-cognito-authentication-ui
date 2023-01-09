@@ -1,4 +1,5 @@
 import Head from "next/head";
+import CardProfile from "../src/ui/components/card-profile";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       </Head>
       <main>
         <h1>Homepage</h1>
+        <CardProfile />
       </main>
     </>
   );

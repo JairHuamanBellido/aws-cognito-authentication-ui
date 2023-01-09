@@ -3,6 +3,7 @@ import { injectable } from "inversify";
 import httpClient from "../../../core/httpClient";
 import { AWSCognitoRepository } from "../abstract/AWSCognitoRepository.abstract";
 import { ICognitoToken } from "../interface/ICognitoToken.interface";
+import { ICognitoUser } from "../interface/ICognitoUser.interface";
 
 @injectable()
 export class AWSCognitoRepositoryImpl implements AWSCognitoRepository {
@@ -19,10 +20,16 @@ export class AWSCognitoRepositoryImpl implements AWSCognitoRepository {
       Authorization: `Basic ${process.env.AWS_COGNITO_AUTH_BASIC_CODE}`,
     };
     const res = await fetch(
-      `${process.env.AWS_COGNITO_AUTH_URL}/oauth2/token?` + queryParams,
+      `${process.env.NEXT_PUBLIC_AWS_COGNITO_AUTH_URL}/oauth2/token?` + queryParams,
       { method: "post", headers }
     ).then((res) => res.json());
 
     return await res;
+  }
+
+  async getUserInfo(): Promise<ICognitoUser> {
+    const response = await httpClient.get<ICognitoUser>("/oauth2/userInfo");
+
+    return response.data;
   }
 }
