@@ -1,4 +1,3 @@
-import axios from "axios";
 import { injectable } from "inversify";
 import httpClient from "../../../core/httpClient";
 import { AWSCognitoRepository } from "../abstract/AWSCognitoRepository.abstract";
@@ -29,7 +28,7 @@ export class AWSCognitoRepositoryImpl implements AWSCognitoRepository {
 
   async getUserInfo(): Promise<ICognitoUser> {
     const response = await httpClient.get<ICognitoUser>("/oauth2/userInfo");
-
+    localStorage.setItem("user_id", response.data.username)
     return response.data;
   }
 }
