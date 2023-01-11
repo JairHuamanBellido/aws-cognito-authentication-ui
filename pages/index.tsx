@@ -1,5 +1,6 @@
 import Head from "next/head";
-import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import CardProfile from "../src/ui/components/card-profile";
 
@@ -7,13 +8,20 @@ export default function Home() {
   const { sendJsonMessage, lastMessage } = useWebSocket(
     process.env.NEXT_PUBLIC_AWS_WEBSOCKET_URL || ""
   );
+  const { replace } = useRouter();
+  const [websocketMessage, setWebsocketMessage] = useState<null | object>(null);
   useEffect(() => {
     const user_id = localStorage.getItem("user_id") || "";
     sendJsonMessage({ action: "userSessionConnect", user_id: user_id });
   }, []);
 
   useEffect(() => {
-    console.log(lastMessage);
+    if (lastMessage !== null) {
+      setWebsocketMessage(JSON.parse(lastMessage.data));
+      setTimeout(() => {
+        replace("/auth");
+      }, 3000);
+    }
   }, [lastMessage]);
   return (
     <>
@@ -25,6 +33,7 @@ export default function Home() {
       </Head>
       <main>
         <h1>Homepage</h1>
+        {!!websocketMessage && <p>Your account has been disable</p>}
         <CardProfile />
       </main>
     </>
